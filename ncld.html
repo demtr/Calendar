@@ -1,0 +1,29 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="Author" content="Trifonov D.A."> 
+<meta name="Date" content="2020-1-6"> 
+<meta name="Description" content="Eternal calendar"> 
+<title>Календарь</title>
+<script src="ncld.js">
+</script>
+</head>
+
+<body>
+<h2>
+Календарь 
+<br>на <img src="img/left.png" onClick="scrollYear(-1)" alt="<"> 
+<script>
+"use strict";
+year = iniScript();
+</script><img src="img/right.png" onClick="scrollYear(1)" alt=">">
+год <span><img src="img/reload.png" id="updCal" onclick="chgCld()" alt="Обновить календарь"></span>
+</h2>
+<script>
+makeCalendar(year);
+</script>
+
+</body>
+
+</html>
