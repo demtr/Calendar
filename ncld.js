@@ -2,7 +2,8 @@
 let months=['Январь','Февраль','Март','Апрель','Май','Июнь',
     'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 let week=['Пн','Вт','Ср','Чт','Пт','Сб','Вс']
-let year, yrs, day, mnum, lday;
+let year; // текущий год календаря, отображаемый в таблице ("старый" год)
+let yrs, day, mnum, lday;
 
 
 // реакция на нажатие кнопки "обновить календарь"
@@ -28,6 +29,7 @@ function scrollYear(diff) {
   for (let i=0; i<4; i++) {
     document.getElementById("ydig"+i).src = 'img/'+yr[i]+'.jpg'; // рисуем новую цифру
   }
+  show_old_year();
   document.getElementById("updCal").style.visibility = "visible"; // показать кнопку обновления
 }
 
@@ -55,6 +57,7 @@ function chgeYear(arg) {
   }
   ist += nnum+".jpg";
   arg.src = ist;
+  show_old_year();
   document.getElementById("updCal").style.visibility = "visible"; // показать кнопку обновления
 }
 
@@ -119,7 +122,7 @@ function updateCalendar() {
     lday = new Date(year, i, 0); // последний день месяца (дата - вычитаем один день из первого дня следующего месяца)
     lday = lday.getDate(); // последний день месяца (число: 28-31)
     st += monDraw(i);
-    el.innerHTML = st;
+    el.innerHTML = st+'</td>';
   }
 }
 
@@ -174,28 +177,160 @@ function monDraw(mnum) {
 // Выбор сезона
 ///////////////////////////////////////
 function season(mnum) {
-    let rv;
-    switch (mnum) {
-      case 1:
-      case 2:
-      case 12:
-        rv='winter'
-        break;
-      case 3:
-      case 4:
-      case 5:
-        rv='spring'
-        break;
-      case 6:
-      case 7:
-      case 8:
-        rv='summer'
-        break;
-      case 9:
-      case 10:
-      case 11:
-        rv='autemn'
-        break;
+  let rv;
+  switch (mnum) {
+    case 1:
+    case 2:
+    case 12:
+      rv='winter'
+      break;
+    case 3:
+    case 4:
+    case 5:
+      rv='spring'
+      break;
+    case 6:
+    case 7:
+    case 8:
+      rv='summer'
+      break;
+    case 9:
+    case 10:
+    case 11:
+      rv='autemn'
+      break;
+  }
+  return rv;
+}
+
+// Показать текущий год календаря
+function show_old_year() {
+  for (let i=5; i<9; i++) // по месяцам
+  {
+    let el = document.getElementById('mon'+i);
+    show_bg_digit(el, year[i-5]);
+  }
+
+}
+
+// Формирование цифры года цветом фона
+function show_bg_digit(el, digit) {
+  const color = 'magenta';
+  const is1 = el.id === 'mon5';
+  let cInd;
+  const tbl = el.querySelector('table');
+
+  for (let i = 0; i < 7; i++)
+    for (let j = 0; j < tbl.rows[i].cells.length; j++) {
+      let bk = tbl.rows[i].cells[j].style;
+      cInd = j;
+      if (is1) cInd--;   // для первого столбца сдвигаем вправо на 1 позицию
+      switch (digit) {
+        case '0':
+          if (i === 0 && (cInd === 2 || cInd === 3) ||
+            i === 1 && (cInd === 1 || cInd === 4) ||
+            i === 2 && (cInd === 1 || cInd === 4) ||
+            i === 3 && (cInd === 1 || cInd === 4) ||
+            i === 4 && (cInd === 1 || cInd === 4) ||
+            i === 5 && (cInd === 1 || cInd === 4) ||
+            i === 6 && (cInd === 2 || cInd === 3)
+          ) bk.background = color;
+          break;
+        case '1':
+          if (i === 0 && cInd === 3 ||
+            i === 1 && (cInd === 2 || cInd === 3) ||
+            i === 2 && (cInd === 1 || cInd === 3) ||
+            i === 3 && cInd === 3 ||
+            i === 4 && cInd === 3 ||
+            i === 5 && cInd === 3 ||
+            i === 6 && cInd === 3
+          ) bk.background = color;
+          break;
+        case '2':
+          if (i === 0 && (cInd === 2 || cInd === 3) ||
+            i === 1 && (cInd === 1 || cInd === 4) ||
+            i === 2 && (cInd === 4) ||
+            i === 3 && (cInd === 3) ||
+            i === 4 && (cInd === 2) ||
+            i === 5 && (cInd === 1) ||
+            i === 6 && (cInd === 1 || cInd === 2 || cInd === 3 || cInd === 4)
+          ) bk.background = color;
+          break;
+        case '3':
+          if (i === 0 && (cInd === 2 || cInd === 3) ||
+            i === 1 && (cInd === 1 || cInd === 4) ||
+            i === 2 && (cInd === 4) ||
+            i === 3 && (cInd === 3) ||
+            i === 4 && (cInd === 4) ||
+            i === 5 && (cInd === 1 || cInd === 4) ||
+            i === 6 && (cInd === 2 || cInd === 3)
+          ) bk.background = color;
+          break;
+        case '4':
+          if (i === 0 && cInd === 4 ||
+            i === 1 && (cInd === 3 || cInd === 4) ||
+            i === 2 && (cInd === 2 || cInd === 4) ||
+            i === 3 && (cInd === 1 || cInd === 4) ||
+            i === 4 && (cInd === 1 || cInd === 2 || cInd === 3 || cInd === 4) ||
+            i === 5 && cInd === 4 ||
+            i === 6 && cInd === 4
+          ) bk.background = color;
+          break;
+        case '5':
+          if (i === 0 && (cInd === 1 || cInd === 2 || cInd === 3 || cInd === 4) ||
+            i === 1 && (cInd === 1) ||
+            i === 2 && (cInd === 1 || cInd === 2 || cInd === 3) ||
+            i === 3 && (cInd === 4) ||
+            i === 4 && (cInd === 4) ||
+            i === 5 && (cInd === 1 || cInd === 4) ||
+            i === 6 && (cInd === 2 || cInd === 3)
+          ) bk.background = color;
+          break;
+
+        case '6':
+          if (i === 0 && (cInd === 2 || cInd === 3) ||
+            i === 1 && (cInd === 1 || cInd === 4) ||
+            i === 2 && (cInd === 1) ||
+            i === 3 && (cInd === 1 || cInd === 2 || cInd === 3) ||
+            i === 4 && (cInd === 1 || cInd === 4) ||
+            i === 5 && (cInd === 1 || cInd === 4) ||
+            i === 6 && (cInd === 2 || cInd === 3)
+          ) bk.background = color;
+          break;
+
+        case '7':
+          if (i === 0 && (cInd === 1 || cInd === 2 || cInd === 3 || cInd === 4) ||
+            i === 1 && (cInd === 4) ||
+            i === 2 && (cInd === 3) ||
+            i === 3 && (cInd === 2) ||
+            i === 4 && (cInd === 1) ||
+            i === 5 && (cInd === 1) ||
+            i === 6 && (cInd === 1)
+          ) bk.background = color;
+          break;
+
+        case '8':
+          if (i === 0 && (cInd === 2 || cInd === 3) ||
+            i === 1 && (cInd === 1 || cInd === 4) ||
+            i === 2 && (cInd === 1 || cInd === 4) ||
+            i === 3 && (cInd === 2 || cInd === 3) ||
+            i === 4 && (cInd === 1 || cInd === 4) ||
+            i === 5 && (cInd === 1 || cInd === 4) ||
+            i === 6 && (cInd === 2 || cInd === 3)
+          ) bk.background = color;
+          break;
+
+        case '9':
+          if (i === 0 && (cInd === 2 || cInd === 3) ||
+            i === 1 && (cInd === 1 || cInd === 4) ||
+            i === 2 && (cInd === 1 || cInd === 4) ||
+            i === 3 && (cInd === 2 || cInd === 3 || cInd === 4) ||
+            i === 4 && (cInd === 4) ||
+            i === 5 && (cInd === 1 || cInd === 4) ||
+            i === 6 && (cInd === 2 || cInd === 3)
+          ) bk.background = color;
+          break;
+      }
+
     }
-    return rv;
 }
