@@ -217,120 +217,20 @@ function show_old_year() {
 function show_bg_digit(el, digit) {
   const color = 'magenta';
   const is1 = el.id === 'mon5';
-  let cInd;
+  let cInd, digMap;
   const tbl = el.querySelector('table');
+  digit = +digit;
+  digMap=[[[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,1],[3,4],[4,1],[4,4],[5,1],[5,4],[6,2],[6,3]],
+    [[0,3],[1,2],[1,3],[2,1],[2,3],[3,3],[4,3],[5,3],[6,3]],
+    [[0,2],[0,3],[1,1],[1,4],[2,4],[3,3],[4,2],[5,1],[6,1],[6,2],[6,3],[6,4]],
+    [[0,2],[0,3],[1,1],[1,4],[2,4],[3,3],[4,4],[5,1],[5,4],[6,2],[6,3]],
+    [[0,4],[1,4],[1,3],[2,2],[2,4],[3,1],[3,4],[4,1],[4,2],[4,3],[4,4],[5,4],[6,4]],
+    [[0,1],[0,2],[0,3],[0,4],[1,1],[2,1],[2,2],[2,3],[3,4],[4,4],[5,1],[5,4],[6,2],[6,3]],
+    [[0,2],[0,3],[1,1],[1,4],[2,1],[3,1],[3,2],[3,3],[4,1],[4,4],[5,1],[5,4],[6,2],[6,3]],
+    [[0,1],[0,2],[0,3],[0,4],[1,4],[2,3],[3,2],[4,1],[5,1],[6,1]],
+    [[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,2],[3,3],[4,1],[4,4],[5,1],[5,4],[6,2],[6,3]],
+    [[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,2],[3,3],[3,4],[4,4],[5,1],[5,4],[6,2],[6,3]]];
 
-  for (let i = 0; i < 7; i++)
-    for (let j = 0; j < tbl.rows[i].cells.length; j++) {
-      let bk = tbl.rows[i].cells[j].style;
-      cInd = j;
-      if (is1) cInd--;   // для первого столбца сдвигаем вправо на 1 позицию
-      switch (digit) {
-        case '0':
-          if (i === 0 && (cInd === 2 || cInd === 3) ||
-            i === 1 && (cInd === 1 || cInd === 4) ||
-            i === 2 && (cInd === 1 || cInd === 4) ||
-            i === 3 && (cInd === 1 || cInd === 4) ||
-            i === 4 && (cInd === 1 || cInd === 4) ||
-            i === 5 && (cInd === 1 || cInd === 4) ||
-            i === 6 && (cInd === 2 || cInd === 3)
-          ) bk.background = color;
-          break;
-        case '1':
-          if (i === 0 && cInd === 3 ||
-            i === 1 && (cInd === 2 || cInd === 3) ||
-            i === 2 && (cInd === 1 || cInd === 3) ||
-            i === 3 && cInd === 3 ||
-            i === 4 && cInd === 3 ||
-            i === 5 && cInd === 3 ||
-            i === 6 && cInd === 3
-          ) bk.background = color;
-          break;
-        case '2':
-          if (i === 0 && (cInd === 2 || cInd === 3) ||
-            i === 1 && (cInd === 1 || cInd === 4) ||
-            i === 2 && (cInd === 4) ||
-            i === 3 && (cInd === 3) ||
-            i === 4 && (cInd === 2) ||
-            i === 5 && (cInd === 1) ||
-            i === 6 && (cInd === 1 || cInd === 2 || cInd === 3 || cInd === 4)
-          ) bk.background = color;
-          break;
-        case '3':
-          if (i === 0 && (cInd === 2 || cInd === 3) ||
-            i === 1 && (cInd === 1 || cInd === 4) ||
-            i === 2 && (cInd === 4) ||
-            i === 3 && (cInd === 3) ||
-            i === 4 && (cInd === 4) ||
-            i === 5 && (cInd === 1 || cInd === 4) ||
-            i === 6 && (cInd === 2 || cInd === 3)
-          ) bk.background = color;
-          break;
-        case '4':
-          if (i === 0 && cInd === 4 ||
-            i === 1 && (cInd === 3 || cInd === 4) ||
-            i === 2 && (cInd === 2 || cInd === 4) ||
-            i === 3 && (cInd === 1 || cInd === 4) ||
-            i === 4 && (cInd === 1 || cInd === 2 || cInd === 3 || cInd === 4) ||
-            i === 5 && cInd === 4 ||
-            i === 6 && cInd === 4
-          ) bk.background = color;
-          break;
-        case '5':
-          if (i === 0 && (cInd === 1 || cInd === 2 || cInd === 3 || cInd === 4) ||
-            i === 1 && (cInd === 1) ||
-            i === 2 && (cInd === 1 || cInd === 2 || cInd === 3) ||
-            i === 3 && (cInd === 4) ||
-            i === 4 && (cInd === 4) ||
-            i === 5 && (cInd === 1 || cInd === 4) ||
-            i === 6 && (cInd === 2 || cInd === 3)
-          ) bk.background = color;
-          break;
-
-        case '6':
-          if (i === 0 && (cInd === 2 || cInd === 3) ||
-            i === 1 && (cInd === 1 || cInd === 4) ||
-            i === 2 && (cInd === 1) ||
-            i === 3 && (cInd === 1 || cInd === 2 || cInd === 3) ||
-            i === 4 && (cInd === 1 || cInd === 4) ||
-            i === 5 && (cInd === 1 || cInd === 4) ||
-            i === 6 && (cInd === 2 || cInd === 3)
-          ) bk.background = color;
-          break;
-
-        case '7':
-          if (i === 0 && (cInd === 1 || cInd === 2 || cInd === 3 || cInd === 4) ||
-            i === 1 && (cInd === 4) ||
-            i === 2 && (cInd === 3) ||
-            i === 3 && (cInd === 2) ||
-            i === 4 && (cInd === 1) ||
-            i === 5 && (cInd === 1) ||
-            i === 6 && (cInd === 1)
-          ) bk.background = color;
-          break;
-
-        case '8':
-          if (i === 0 && (cInd === 2 || cInd === 3) ||
-            i === 1 && (cInd === 1 || cInd === 4) ||
-            i === 2 && (cInd === 1 || cInd === 4) ||
-            i === 3 && (cInd === 2 || cInd === 3) ||
-            i === 4 && (cInd === 1 || cInd === 4) ||
-            i === 5 && (cInd === 1 || cInd === 4) ||
-            i === 6 && (cInd === 2 || cInd === 3)
-          ) bk.background = color;
-          break;
-
-        case '9':
-          if (i === 0 && (cInd === 2 || cInd === 3) ||
-            i === 1 && (cInd === 1 || cInd === 4) ||
-            i === 2 && (cInd === 1 || cInd === 4) ||
-            i === 3 && (cInd === 2 || cInd === 3 || cInd === 4) ||
-            i === 4 && (cInd === 4) ||
-            i === 5 && (cInd === 1 || cInd === 4) ||
-            i === 6 && (cInd === 2 || cInd === 3)
-          ) bk.background = color;
-          break;
-      }
-
-    }
+  for(let k=0; k<digMap[digit].length; k++) 
+    tbl.rows[digMap[digit][k][0]].cells[digMap[digit][k][1]+(is1?1:0)].style.background = color;
 }
