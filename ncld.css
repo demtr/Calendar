@@ -20,24 +20,27 @@ h2 { font-family: Verdana, Arial, Helvetica, sans-serif;
     width: 470px;
     display: table-cell;
 }
+.month-tile {
+     background-color: #aef;
+}
 .winter { text-align: right;
      background-color: #ddf;
-     vertical-align: "text-bottom";
+     vertical-align: text-bottom;
      width: 100%; /* Ширина таблицы */
 }
 .spring { text-align: right;
      background-color: #dfd;
-     vertical-align: "text-bottom";
+     vertical-align: text-bottom;
      width: 100%; /* Ширина таблицы */
      }
 .summer { text-align: right;
      background-color: #fdd;
-     vertical-align: "text-bottom";
+     /*vertical-align: text-bottom;*/
      width: 100%; /* Ширина таблицы */
      }
-.autemn { text-align: right;
+.autumn { text-align: right;
      background-color: #ffd;
-     vertical-align: "text-bottom";
+     vertical-align: text-bottom;
      width: 100%; /* Ширина таблицы */
      }
 .holiday {
