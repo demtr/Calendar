@@ -29,8 +29,8 @@ function scrollYear(diff) {
   for (let i=0; i<4; i++) {
     document.getElementById("ydig"+i).src = 'img/'+yr[i]+'.jpg'; // рисуем новую цифру
   }
-  show_old_year();
   document.getElementById("updCal").style.visibility = "visible"; // показать кнопку обновления
+  show_old_year();
 }
 
 // Изменение одиночной цифры года при нажатии на ней кнопки мыши
@@ -57,8 +57,8 @@ function chgeYear(arg) {
   }
   ist += nnum+".jpg";
   arg.src = ist;
-  show_old_year();
   document.getElementById("updCal").style.visibility = "visible"; // показать кнопку обновления
+  show_old_year();
 }
 
 // Выкладываем цифры календаря на текущий год
@@ -77,7 +77,7 @@ function iniScript(){
 // Создание календаря
 function makeCalendar(year) {
     document.write('<link rel="stylesheet" href="ncld.css">');
-    if ( day == 0 ) day = 7;
+    if ( day === 0 ) day = 7;
     document.write('<table border="1" cellspacing="0">');
     for (let i=0; i<3; i++) // по строкам
     {
@@ -85,10 +85,10 @@ function makeCalendar(year) {
         for (let j=0; j<4; j++) // по столбцам
         {
             mnum = (i*4)+(j+1); // месяц: 1-12
-            document.write('<td id="mon'+mnum+'">','<p class="month-name">',months[mnum-1],'</p>');
+            document.write('<td class="month-tile" id="mon'+mnum+'">','<p class="month-name">',months[mnum-1],'</p>');
             yrs = new Date(year,mnum-1,1); // месяц: 0-11
             day = yrs.getDay();
-            if ( day == 0 ) day = 7;
+            if ( day === 0 ) day = 7;
             lday = new Date(year,mnum,0); // последний день месяца (дата - вычитаем один день из первого дня следующего месяца)
             lday = lday.getDate(); // последний день месяца (число: 28-31)
             document.write(monDraw(mnum));
@@ -118,7 +118,7 @@ function updateCalendar() {
     st = '<td> <p class="month-name">' + months[i-1] + '</p>';
     yrs = new Date(year,i-1,1); // месяц: 0-11
     day = yrs.getDay(); // день недели
-    if ( day == 0 ) day = 7;
+    if ( day === 0 ) day = 7;
     lday = new Date(year, i, 0); // последний день месяца (дата - вычитаем один день из первого дня следующего месяца)
     lday = lday.getDate(); // последний день месяца (число: 28-31)
     st += monDraw(i);
@@ -130,14 +130,14 @@ function updateCalendar() {
 Формирование таблицы одного месяца
 */
 function monDraw(mnum) {
-  let cols, dnum=1, smon;
-  if (mnum == 2)
+  let cols, smon;
+  if (mnum === 2)
   {
-     cols = (day==1 && lday == 28) ? 4 : 5;
+     cols = (day===1 && lday === 28) ? 4 : 5;
   }
   else
   {
-     if (day==6 && lday==31 || day==7) cols=6;
+     if (day===6 && lday===31 || day===7) cols=6;
      else cols=5;
   }
 
@@ -148,16 +148,16 @@ function monDraw(mnum) {
   for (let i=0; i<7; i++)
   {
       smon += '<tr>';
-      if (mnum%4 == 1) {
+      if (mnum%4 === 1) {
           smon += '<td class="weekDay">'+week[i];
           smon += '</td>';
       }
       for (let j=0; j<cols; j++)
       {
           smon += '<td';
-          if (i>4) smon += ' class="holiday"';
+          if (i>4 && +year>1917) smon += ' class="holiday"';
           smon += '>';
-          if (j==0 && day>i+1)
+          if (j===0 && day>i+1)
               smon += ' ';
           else
           {
@@ -197,7 +197,7 @@ function season(mnum) {
     case 9:
     case 10:
     case 11:
-      rv='autemn'
+      rv='autumn'
       break;
   }
   return rv;
@@ -217,7 +217,7 @@ function show_old_year() {
 function show_bg_digit(el, digit) {
   const color = 'magenta';
   const is1 = el.id === 'mon5';
-  let cInd, digMap;
+  let digMap;
   const tbl = el.querySelector('table');
   digit = +digit;
   digMap=[[[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,1],[3,4],[4,1],[4,4],[5,1],[5,4],[6,2],[6,3]],
