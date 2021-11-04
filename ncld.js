@@ -1,10 +1,20 @@
 "use strict";
-let months=['Январь','Февраль','Март','Апрель','Май','Июнь',
+const months=['Январь','Февраль','Март','Апрель','Май','Июнь',
     'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-let week=['Пн','Вт','Ср','Чт','Пт','Сб','Вс']
+const week=['Пн','Вт','Ср','Чт','Пт','Сб','Вс']
 let year; // текущий год календаря, отображаемый в таблице ("старый" год)
-let yrs, day, mnum, lday;
-
+let day; // день недели первого дня месяца 1..7
+let lday; // последний день месяца
+let tooltipElem;
+const dates = {yearly:[{day:"01-01",desc:"Новый год"},
+                       {day:"03-08",desc:"Женский день",begin:1918},
+                       {day:"05-01",desc:"Мир, май, труд!",begin:1918},
+                       {day:"05-09",desc:"День победы",begin:1945},
+                       {day:"11-07",desc:"Великая октябрьская социалистическая революция",begin:1918}],
+		once:[{date:"1492-10-12",desc:"Дата открытия Америки"},
+      {date:"1961-04-12",desc:"Первый полёт человека в космос"},
+      {date:"1980-08-19",desc:"День открытия московской олимпиады XXII"},
+      {date:"1991-08-19",desc:"День начала ГКЧП"}]};
 
 // реакция на нажатие кнопки "обновить календарь"
 function chgCld() {
@@ -74,29 +84,35 @@ function iniScript(){
     return yr;
 }
 
+// Получение первого и последнего дня месяца
+function getFirstAndLastDaysOfTheMonth(month) {
+  const yrs = new Date(year,month-1,1); // месяц: 0-11
+  day = yrs.getDay();
+  if ( day === 0 ) day = 7;
+  lday = new Date(year,month,0); // последний день месяца (дата - вычитаем один день из первого дня следующего месяца)
+  lday = lday.getDate(); // последний день месяца (число: 28-31)
+}
+
 // Создание календаря
 function makeCalendar(year) {
-    document.write('<link rel="stylesheet" href="ncld.css">');
-    if ( day === 0 ) day = 7;
-    document.write('<table border="1" cellspacing="0">');
-    for (let i=0; i<3; i++) // по строкам
+  let mnum; // номер месяца 1..12
+  document.write('<link rel="stylesheet" href="ncld.css">');
+  if (day === 0) day = 7;
+  document.write('<table border="0" cellspacing="0">');
+  for (let i = 0; i < 3; i++) // по строкам
+  {
+    document.write('<tr>');
+    for (let j = 0; j < 4; j++) // по столбцам
     {
-        document.write('<tr>');
-        for (let j=0; j<4; j++) // по столбцам
-        {
-            mnum = (i*4)+(j+1); // месяц: 1-12
-            document.write('<td class="month-tile" id="mon'+mnum+'">','<p class="month-name">',months[mnum-1],'</p>');
-            yrs = new Date(year,mnum-1,1); // месяц: 0-11
-            day = yrs.getDay();
-            if ( day === 0 ) day = 7;
-            lday = new Date(year,mnum,0); // последний день месяца (дата - вычитаем один день из первого дня следующего месяца)
-            lday = lday.getDate(); // последний день месяца (число: 28-31)
-            document.write(monDraw(mnum));
-            document.write('</td>');
-        }
-        document.write('</tr>');
+      mnum = (i * 4) + (j + 1); // месяц: 1-12
+      document.write('<td class="month-tile" id="mon' + mnum + '">', '<p class="month-name">', months[mnum - 1], '</p>');
+      getFirstAndLastDaysOfTheMonth(mnum);
+      document.write(monDraw(mnum));
+      document.write('</td>');
     }
-    document.write('</table>');
+    document.write('</tr>');
+  }
+  document.write('</table>');
 }
 
 // получить требуемый год 
@@ -116,14 +132,26 @@ function updateCalendar() {
   {
     let el = document.getElementById('mon'+i), st;
     st = '<td> <p class="month-name">' + months[i-1] + '</p>';
-    yrs = new Date(year,i-1,1); // месяц: 0-11
-    day = yrs.getDay(); // день недели
-    if ( day === 0 ) day = 7;
-    lday = new Date(year, i, 0); // последний день месяца (дата - вычитаем один день из первого дня следующего месяца)
-    lday = lday.getDate(); // последний день месяца (число: 28-31)
+    getFirstAndLastDaysOfTheMonth(i);
     st += monDraw(i);
     el.innerHTML = st+'</td>';
   }
+}
+
+/**
+Формирование таблицы одного месяца
+*/
+function isSpecialDate(month, day) {
+  // let yDate = dates.once[0].date;
+  for (let dt of dates.once) {
+    let oDate = dt.date;
+    if (year == oDate.slice(0,4) && month == oDate.slice(5,7) && day == oDate.slice(8)) return dt.desc;
+  }
+  for (let dt of dates.yearly) {
+    let oDate = dt.day;
+    if (month == oDate.slice(0,2) && day == oDate.slice(3) && (!dt.begin || dt.begin <= +year)) return dt.desc;
+  }
+  return false;
 }
 
 /**
@@ -141,9 +169,7 @@ function monDraw(mnum) {
      else cols=5;
   }
 
-  smon =  '<table align="center"';
-  smon += `class="${season(mnum)}"`;
-  smon += '>';
+  smon =  `<table align="center" class="${season(mnum)} month">`;
 
   for (let i=0; i<7; i++)
   {
@@ -154,17 +180,18 @@ function monDraw(mnum) {
       }
       for (let j=0; j<cols; j++)
       {
+          let curDay=7*j+i+2-day;
+      let cls='', tip='';
           smon += '<td';
-          if (i>4 && +year>1917) smon += ' class="holiday"';
+      if (i > 4 && +year > 1917) {cls = 'holiday'; }
+      if (tip=isSpecialDate(mnum, curDay)) {cls += ' spec-date';   }
+      if (cls.length>0) smon += ` class="${cls}"`;
+      if (tip && tip.length>0) smon += ` data-tooltip="${tip}"`;
           smon += '>';
-          if (j===0 && day>i+1)
+          if (curDay<1 || curDay>lday)
               smon += ' ';
           else
-          {
-              let curDay=7*j+i+2-day;
-              if (curDay>lday) curDay=' ';
               smon += curDay;
-          }
           smon += '</td>';
       }
       smon += '</tr>';
@@ -220,17 +247,55 @@ function show_bg_digit(el, digit) {
   let digMap;
   const tbl = el.querySelector('table');
   digit = +digit;
-  digMap=[[[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,1],[3,4],[4,1],[4,4],[5,1],[5,4],[6,2],[6,3]],
-    [[0,3],[1,2],[1,3],[2,1],[2,3],[3,3],[4,3],[5,3],[6,3]],
-    [[0,2],[0,3],[1,1],[1,4],[2,4],[3,3],[4,2],[5,1],[6,1],[6,2],[6,3],[6,4]],
-    [[0,2],[0,3],[1,1],[1,4],[2,4],[3,3],[4,4],[5,1],[5,4],[6,2],[6,3]],
+  digMap=[[[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,1],[3,4],[4,1],[4,4],[5,1],[5,4],[6,2],[6,3]], // 0
+    [[0,3],[1,2],[1,3],[2,1],[2,3],[3,3],[4,3],[5,3],[6,3]], // 1
+    [[0,2],[0,3],[1,1],[1,4],[2,4],[3,3],[4,2],[5,1],[6,1],[6,2],[6,3],[6,4]], //2
+    [[0,2],[0,3],[1,1],[1,4],[2,4],[3,3],[4,4],[5,1],[5,4],[6,2],[6,3]], //3
     [[0,4],[1,4],[1,3],[2,2],[2,4],[3,1],[3,4],[4,1],[4,2],[4,3],[4,4],[5,4],[6,4]],
     [[0,1],[0,2],[0,3],[0,4],[1,1],[2,1],[2,2],[2,3],[3,4],[4,4],[5,1],[5,4],[6,2],[6,3]],
     [[0,2],[0,3],[1,1],[1,4],[2,1],[3,1],[3,2],[3,3],[4,1],[4,4],[5,1],[5,4],[6,2],[6,3]],
     [[0,1],[0,2],[0,3],[0,4],[1,4],[2,3],[3,2],[4,1],[5,1],[6,1]],
     [[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,2],[3,3],[4,1],[4,4],[5,1],[5,4],[6,2],[6,3]],
-    [[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,2],[3,3],[3,4],[4,4],[5,1],[5,4],[6,2],[6,3]]];
+    [[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,2],[3,3],[3,4],[4,4],[5,1],[5,4],[6,2],[6,3]]]; // 9
 
   for(let k=0; k<digMap[digit].length; k++) 
     tbl.rows[digMap[digit][k][0]].cells[digMap[digit][k][1]+(is1?1:0)].style.background = color;
+}
+
+/*
+ * Обработка наведения мыши
+ */
+document.onmouseover = function (ev) {
+  let target = ev.target;
+  let ttt = target.dataset.tooltip;
+
+  if (!ttt) return;
+  tooltipElem = document.createElement('div');
+  tooltipElem.className = 'tooltip';
+  tooltipElem.innerHTML = ttt;
+
+  // позиционируем сверху от аннотируемого элемента (top-center)
+  let coords = target.getBoundingClientRect();
+
+  let left = coords.left + (target.offsetWidth - tooltipElem.offsetWidth) / 2;
+  if (left < 0) left = 0; // не заезжать за левый край окна
+
+  let top = coords.top - tooltipElem.offsetHeight - 5;
+  if (top < 0) { // если подсказка не помещается сверху, то отображать её снизу
+    top = coords.top + target.offsetHeight + 5;
+  }
+
+  tooltipElem.style.left = left + 'px';
+  tooltipElem.style.top = top + 'px';
+  document.body.appendChild(tooltipElem);
+}
+
+/*
+ * Обработка отведения мыши
+ */
+document.onmouseout = function (e) {
+  if (tooltipElem) {
+    tooltipElem.remove();
+    tooltipElem = null;
+  }
 }
