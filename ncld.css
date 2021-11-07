@@ -1,65 +1,75 @@
-
-.month-name  {text-align:center;
+.month-name  {
+    margin-top: 6px;
+    margin-bottom: 4px;
+    vertical-align: top;
+}
+.month-name-content  {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
     background-color: #8f8;
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: 14pt;
-    margin-top: 2px;
-    margin-bottom: 5%;
-    /*text-indent: 20px;*/
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
+    border-radius: 5px;
 }
+.month-name-indent  {
+    display: inline-block;
+    min-width: 20px;
+    min-height: 32px;
+}
+#mon1 .month-name {margin-top: 0;}
+#mon2 .month-name {margin-top: 0;}
+#mon3 .month-name {margin-top: 0;}
+#mon4 .month-name {margin-top: 0;}
 h2 { font-family: Verdana, Arial, Helvetica, sans-serif;
     text-align: center;
     color: #77d;
-    text-indent: 0px;
-    padding: 0px;
+    text-indent: 0;
+    padding: 0;
     width: 470px;
     display: table-cell;
 }
-.month-tile {
-     //background-color: #aef;
-}
-.winter { text-align: right;
-     background-color: #ddf;
-     vertical-align: text-bottom;
-     width: 100%; /* Ширина таблицы */
-    height: 100%;
-}
-.spring { text-align: right;
-     background-color: #dfd;
-     vertical-align: text-bottom;
-     width: 100%; /* Ширина таблицы */
-    height: 100%;
-     }
-.summer { text-align: right;
-     background-color: #fdd;
-     /*vertical-align: text-bottom;*/
-     width: 100%; /* Ширина таблицы */
-    height: 100%;
-     }
-.autumn { text-align: right;
-     background-color: #ffd;
-     vertical-align: text-bottom;
-     width: 100%; /* Ширина таблицы */
-    height: 100%;
-     }
+.winter {background-color: lightblue;}
+.spring {background-color: #dfd;}
+.summer {background-color: #fdd;}
+.autumn {background-color: ivory;}
 .holiday {
     color: red;
     font-weight: bold;
 }
-.weekDay {
-    text-align: left;
-    color: white;
-    background: brown;
+.week-day {
+    text-align: center;
+    font-size: 12px;
+    font-family: Noto Sans, sans-serif;
+    color: #88ff88;
+    background-color: darkgoldenrod;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
+    border-radius: 5px;
+    vertical-align: text-bottom;
+}
+.week-day-table {
+    min-width: 32px;
+    height: 152px; /* Высота таблицы */
+    -webkit-border-horizontal-spacing: 0;
 }
 #updCal {
     visibility: hidden;
     width: 25px;
 }
-table {
-    border-radius: 5px;
-}
 .spec-date {
     background-color: #88ff88;
+}
+.spec-date-animated {
+    animation-name: change-bg;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    border: solid 1px white;
+}
+@keyframes change-bg {
+    0% {background-color: #88ff88;}
+    50% {background-color: magenta;}
+    100% {background-color: #88ff88;}
 }
 td .spec-date {
     border: solid 1px green;
@@ -75,4 +85,18 @@ td .spec-date {
     color: #333;
     background: #fff;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
+}
+.month {
+    font-size: 12px;
+    font-family: Noto Sans, sans-serif;
+    text-align: right;
+    vertical-align: text-bottom;
+    width: 100%; /* Ширина таблицы */
+    height: 152px; /* Высота таблицы */
+    border-radius: 5px;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
+}
+.month td {width: 10px;}
+.calendar-row {
+    width: 100%;
 }
