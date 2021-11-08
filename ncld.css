@@ -7,7 +7,7 @@
     display: inline-block;
     width: 100%;
     text-align: center;
-    background-color: #8f8;
+    background-color: #98cfaa;
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: 14pt;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
@@ -18,10 +18,6 @@
     min-width: 20px;
     min-height: 32px;
 }
-#mon1 .month-name {margin-top: 0;}
-#mon2 .month-name {margin-top: 0;}
-#mon3 .month-name {margin-top: 0;}
-#mon4 .month-name {margin-top: 0;}
 h2 { font-family: Verdana, Arial, Helvetica, sans-serif;
     text-align: center;
     color: #77d;
@@ -32,8 +28,8 @@ h2 { font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 .winter {background-color: lightblue;}
 .spring {background-color: #dfd;}
-.summer {background-color: #fdd;}
-.autumn {background-color: ivory;}
+.summer {background-color: #fed;}
+.autumn {background-color: #ccffbb;}
 .holiday {
     color: red;
     font-weight: bold;
@@ -42,6 +38,7 @@ h2 { font-family: Verdana, Arial, Helvetica, sans-serif;
     text-align: center;
     font-size: 12px;
     font-family: Noto Sans, sans-serif;
+    font-weight: bolder;
     color: #88ff88;
     background-color: darkgoldenrod;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
@@ -58,18 +55,7 @@ h2 { font-family: Verdana, Arial, Helvetica, sans-serif;
     width: 25px;
 }
 .spec-date {
-    background-color: #88ff88;
-}
-.spec-date-animated {
-    animation-name: change-bg;
-    animation-duration: 3s;
-    animation-iteration-count: infinite;
-    border: solid 1px white;
-}
-@keyframes change-bg {
-    0% {background-color: #88ff88;}
-    50% {background-color: magenta;}
-    100% {background-color: #88ff88;}
+    background-color: gold;
 }
 td .spec-date {
     border: solid 1px green;
