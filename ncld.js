@@ -14,7 +14,7 @@ const dates = {yearly:[{day:"01-01",desc:"Новый год"},
                        {day:"11-07",desc:"Великая октябрьская социалистическая революция",begin:1918,end:2004}],
 		once:[{date:"1492-10-12",desc:"Дата открытия Америки"},
       {date:"1961-04-12",desc:"Первый полёт человека в космос"},
-      {date:"1980-08-19",desc:"День открытия московской олимпиады XXII"},
+      {date:"1980-07-19",desc:"День открытия московской олимпиады XXII"},
       {date:"1991-08-19",desc:"День начала ГКЧП"}]};
 
 // реакция на нажатие кнопки "обновить календарь"
@@ -185,10 +185,11 @@ function monDraw(mnum) {
       let curDay = 7 * j + i + 2 - day; // текущий день месяца
       let cls = '', tip = isSpecialDate(mnum, curDay);
       smon += '<td';
-      if (i > 4 && +year > 1917 || tip) cls = 'holiday';
+      if (i > 4 && +year > 1967 || i > 5 && +year > 1917 || tip) cls = 'holiday';
       if (tip) cls += ' spec-date';
       if (cls.length > 0) smon += ` class="${cls}"`;
-      if (tip && tip.length > 0) smon += ` data-tooltip="${tip}"`;
+      if (tip && tip.length > 0) {smon += ` data-tooltip="${tip}"`;
+      smon += ` onmouseover="specDateOver(event);" onmouseout="specDateOut(event)"`;}
       smon += '>';
       if (curDay < 1 || curDay > lday) smon += ' ';
       else smon += curDay;
@@ -209,22 +210,22 @@ function season(mnum) {
     case 1:
     case 2:
     case 12:
-      rv='winter'
+      rv='winter';
       break;
     case 3:
     case 4:
     case 5:
-      rv='spring'
+      rv='spring';
       break;
     case 6:
     case 7:
     case 8:
-      rv='summer'
+      rv='summer';
       break;
     case 9:
     case 10:
     case 11:
-      rv='autumn'
+      rv='autumn';
       break;
   }
   return rv;
@@ -268,7 +269,7 @@ function show_bg_digit(el, digit) {
 /*
  * Обработка наведения мыши
  */
-document.onmouseover = function (ev) {
+function specDateOver(ev) {
   let target = ev.target;
   let ttt = target.dataset.tooltip;
 
@@ -276,14 +277,15 @@ document.onmouseover = function (ev) {
   tooltipElem = document.createElement('div');
   tooltipElem.className = 'tooltip';
   tooltipElem.innerHTML = ttt;
+  target.style.cursor='default';
 
   // позиционируем сверху от аннотируемого элемента (top-center)
   let coords = target.getBoundingClientRect();
 
-  let left = coords.left + (target.offsetWidth - tooltipElem.offsetWidth) / 2;
+  let left = coords.left + 7 + (target.offsetWidth - tooltipElem.offsetWidth) / 2;
   if (left < 0) left = 0; // не заезжать за левый край окна
 
-  let top = coords.top - tooltipElem.offsetHeight - 5;
+  let top = coords.top - tooltipElem.offsetHeight - 15;
   if (top < 0) { // если подсказка не помещается сверху, то отображать её снизу
     top = coords.top + target.offsetHeight + 5;
   }
@@ -296,7 +298,7 @@ document.onmouseover = function (ev) {
 /*
  * Обработка отведения мыши
  */
-document.onmouseout = function () {
+function specDateOut () {
   if (tooltipElem) {
     tooltipElem.remove();
     tooltipElem = null;
