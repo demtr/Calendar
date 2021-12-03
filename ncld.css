@@ -60,6 +60,7 @@ h2 { font-family: Verdana, Arial, Helvetica, sans-serif;
 td .spec-date {
     border: solid 1px green;
     border-radius: 5px;
+    cursor: default;
 }
 .tooltip {
     position: fixed;

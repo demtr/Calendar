@@ -277,7 +277,6 @@ function specDateOver(ev) {
   tooltipElem = document.createElement('div');
   tooltipElem.className = 'tooltip';
   tooltipElem.innerHTML = ttt;
-  target.style.cursor='default';
 
   // позиционируем сверху от аннотируемого элемента (top-center)
   let coords = target.getBoundingClientRect();
