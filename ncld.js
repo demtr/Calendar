@@ -231,7 +231,7 @@ function season(mnum) {
   return rv;
 }
 
-// Показать текущий год календаря
+// Показать текущий год календаря подсветкой
 function show_old_year() {
   for (let i=5; i<9; i++) // по месяцам
   {
