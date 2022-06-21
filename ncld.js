@@ -6,16 +6,23 @@ let year; // текущий год календаря, отображаемый 
 let day; // день недели первого дня месяца 1..7
 let lday; // последний день месяца
 let tooltipElem;
+const today = new Date();
 const dates = {yearly:[{day:"01-01",desc:"Новый год"},
+                       {day:"02-23",desc:"День Советской армии",begin:1922},
                        {day:"03-08",desc:"Женский день",begin:1918},
                        {day:"05-01",desc:"Мир, май, труд!",begin:1918},
                        {day:"05-09",desc:"День победы",begin:1945},
+                       {day:"06-12",desc:"День России",begin:1992},
                        {day:"11-04",desc:"День народного единства",begin:2005},
                        {day:"11-07",desc:"Великая октябрьская социалистическая революция",begin:1918,end:2004}],
 		once:[{date:"1492-10-12",desc:"Дата открытия Америки"},
       {date:"1961-04-12",desc:"Первый полёт человека в космос"},
       {date:"1980-07-19",desc:"День открытия московской олимпиады XXII"},
       {date:"1991-08-19",desc:"День начала ГКЧП"}]};
+
+window.onload = function (){
+  showToday();
+}
 
 // реакция на нажатие кнопки "обновить календарь"
 function chgCld() {
@@ -94,8 +101,33 @@ function getFirstAndLastDaysOfTheMonth(month) {
   lday = lday.getDate(); // последний день месяца (число: 28-31)
 }
 
-// Создание календаря
-function makeCalendar(year) {
+// Показать сегодняшнюю дату
+function showToday() {
+  const month = today.getMonth()+1,
+        day = today.getDate(),
+        mt = document.getElementById("mon"+month).children[0];
+  let rw = today.getDay();
+  if (rw === 0) rw = 7;
+  rw--;
+  let target = mt.rows[rw].cells[Math.floor((day+5-rw)/7)];
+  target.classList.add("today");
+  multik(target);
+}
+
+// Подсветить элемент
+function multik(elem) {
+  let x=0;
+  setInterval(()=>{
+    let y=(Math.sin(x)+1);
+    let y2=(-Math.sin(x)+1);
+    elem.style.backgroundColor="rgb("+(y*127)+","+(127+y*64)+",255)";
+    elem.style.color="rgb(0,"+(127+y2*64)+","+(y2*127)+")";
+    x+=0.1;},
+      100);
+}
+
+// Создание календаря (первоначально - при запуске)
+function makeCalendar() {
   document.write('<link rel="stylesheet" href="ncld.css">');
   if (day === 0) day = 7;
   document.write('<table border="0" cellspacing="0">');
@@ -144,11 +176,12 @@ function updateCalendar() {
     st += monDraw(i);
     el.innerHTML = st+'</td>';
   }
+  if (+year === today.getFullYear()) showToday();
 }
 
 /**
-Формирование таблицы одного месяца
-*/
+ * Является ли дата памятной?
+ */
 function isSpecialDate(month, day) {
   // let yDate = dates.once[0].date;
   for (let dt of dates.once) {
@@ -164,17 +197,15 @@ function isSpecialDate(month, day) {
 }
 
 /**
-Формирование таблицы одного месяца
-*/
+ *  Формирование таблицы одного месяца
+ *  mnum - номер месяца (1-12)
+ */
 function monDraw(mnum) {
-  let cols, smon =  `<table class="${season(mnum)} month">`;
+  let cols, smon = `<table class="${season(mnum)} month">`;
   getFirstAndLastDaysOfTheMonth(mnum);
-  if (mnum === 2)
-  {
+  if (mnum === 2) {
      cols = (day===1 && lday === 28) ? 4 : 5;
-  }
-  else
-  {
+  }  else  {
      if (day===6 && lday===31 || day===7) cols=6;
      else cols=5;
   }
