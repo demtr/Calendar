@@ -118,12 +118,12 @@ function showToday() {
 function multik(elem) {
   let x=0;
   setInterval(()=>{
-    let y=(Math.sin(x)+1);
-    let y2=(-Math.sin(x)+1);
-    elem.style.backgroundColor="rgb("+(y*127)+","+(127+y*64)+",255)";
-    elem.style.color="rgb(0,"+(127+y2*64)+","+(y2*127)+")";
+    let y = Math.sin(x)+1;
+    let y2 = -Math.sin(x)+1;
+    elem.style.backgroundColor="rgb("+Math.round(y*127)+","+Math.round(127+y*64)+",255)";
+    elem.style.color="rgb(0,"+Math.round(127+y2*64)+","+Math.round(y*32)+")";
     x+=0.1;},
-      100);
+  100);
 }
 
 // Создание календаря (первоначально - при запуске)
