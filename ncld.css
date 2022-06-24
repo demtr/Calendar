@@ -55,6 +55,7 @@ h2 { font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 #updCal {
     visibility: hidden;
+    /*display: none;*/
     width: 25px;
 }
 .spec-date {
@@ -91,8 +92,3 @@ td .spec-date {
 .calendar-row {
     width: 100%;
 }
-/*
-.today {background: magenta;}
-.today:before {
-    border-left: 2px solid red;
-}*/

@@ -6,7 +6,6 @@ let year; // текущий год календаря, отображаемый 
 let day; // день недели первого дня месяца 1..7
 let lday; // последний день месяца
 let tooltipElem;
-const today = new Date();
 const dates = {yearly:[{day:"01-01",desc:"Новый год"},
                        {day:"02-23",desc:"День Советской армии",begin:1922},
                        {day:"03-08",desc:"Женский день",begin:1918},
@@ -20,8 +19,40 @@ const dates = {yearly:[{day:"01-01",desc:"Новый год"},
       {date:"1980-07-19",desc:"День открытия московской олимпиады XXII"},
       {date:"1991-08-19",desc:"День начала ГКЧП"}]};
 
+// Объект "сегодня"
+const thisDay = {
+  today: new Date(),
+
+// Показать сегодняшнюю дату
+  showToday: function () {
+    this.today = new Date();
+    const month = this.today.getMonth() + 1,
+        day = this.today.getDate(),
+        mt = document.getElementById("mon" + month).children[0]; // таблица текущего месяца
+    let row = this.today.getDay();
+    if (row === 0) row = 7;
+    row--;
+    let cell = mt.rows[row].cells[Math.floor((day + 5 - row) / 7)];
+    cell.innerHTML = `<span title="Вы здесь!">${cell.innerHTML}</span>`;
+    this.multik(cell);
+  },
+
+// Подсветить элемент
+  multik: function (elem) {
+    let x = 0;
+    setInterval(() => {
+          let y = Math.sin(x) + 1;
+          let y2 = -Math.sin(x) + 1;
+          elem.style.backgroundColor = "rgb(" + Math.round(y * 127) + "," + Math.round(127 + y * 64) + ",255)";
+          elem.style.color = "rgb(0," + Math.round(127 + y2 * 64) + "," + Math.round(y * 32) + ")";
+          x += 0.1;
+        },
+        100);
+  }
+}
+
 window.onload = function (){
-  showToday();
+  thisDay.showToday();
 }
 
 // реакция на нажатие кнопки "обновить календарь"
@@ -97,33 +128,8 @@ function getFirstAndLastDaysOfTheMonth(month) {
   const yrs = new Date(year,month-1,1); // месяц: 0-11
   day = yrs.getDay();
   if ( day === 0 ) day = 7;
-  lday = new Date(year,month,0); // последний день месяца (дата - вычитаем один день из первого дня следующего месяца)
+  lday = new Date(year, month,0); // последний день месяца (дата - вычитаем один день из первого дня следующего месяца)
   lday = lday.getDate(); // последний день месяца (число: 28-31)
-}
-
-// Показать сегодняшнюю дату
-function showToday() {
-  const month = today.getMonth()+1,
-        day = today.getDate(),
-        mt = document.getElementById("mon"+month).children[0];
-  let rw = today.getDay();
-  if (rw === 0) rw = 7;
-  rw--;
-  let target = mt.rows[rw].cells[Math.floor((day+5-rw)/7)];
-  target.classList.add("today");
-  multik(target);
-}
-
-// Подсветить элемент
-function multik(elem) {
-  let x=0;
-  setInterval(()=>{
-    let y = Math.sin(x)+1;
-    let y2 = -Math.sin(x)+1;
-    elem.style.backgroundColor="rgb("+Math.round(y*127)+","+Math.round(127+y*64)+",255)";
-    elem.style.color="rgb(0,"+Math.round(127+y2*64)+","+Math.round(y*32)+")";
-    x+=0.1;},
-  100);
 }
 
 // Создание календаря (первоначально - при запуске)
@@ -176,7 +182,7 @@ function updateCalendar() {
     st += monDraw(i);
     el.innerHTML = st+'</td>';
   }
-  if (+year === today.getFullYear()) showToday();
+  if (+year === thisDay.today.getFullYear()) thisDay.showToday();
 }
 
 /**
