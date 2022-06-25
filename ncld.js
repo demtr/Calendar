@@ -6,7 +6,7 @@ let year; // текущий год календаря, отображаемый 
 let day; // день недели первого дня месяца 1..7
 let lday; // последний день месяца
 let tooltipElem;
-const dates = {yearly:[{day:"01-01",desc:"Новый год"},
+const dates = {yearly:[{day:"01-01",desc:"Новый год",begin:1700},
                        {day:"02-23",desc:"День Советской армии",begin:1922},
                        {day:"03-08",desc:"Женский день",begin:1918},
                        {day:"05-01",desc:"Мир, май, труд!",begin:1918},
@@ -67,17 +67,18 @@ const refreshButton = {
   }
 }
 
-function chgeCursor(arg) {
-  if (event.pageY > 60) {
-    arg.style.cursor="url('img/up.png'),n-resize"; 
-  } else {
-    arg.style.cursor="url('img/down.png'),n-resize"; 
-  }
-}
-
 window.onload = function (){
   refreshButton.button = document.getElementById("updCal");
+  markSpecialDates();
   thisDay.showToday();
+}
+
+function chgeCursor(arg) {
+  if (event.pageY > 60) {
+    arg.style.cursor="url('img/up.png'),n-resize";
+  } else {
+    arg.style.cursor="url('img/down.png'),n-resize";
+  }
 }
 
 // Изменение года на один
@@ -187,29 +188,42 @@ function getYear() {
 function updateCalendar() {
   for (let i=1; i<13; i++) // по месяцам
   {
-    let el = document.getElementById('mon'+i), st;
-    st = '<td>';
-    st += monDraw(i);
-    el.innerHTML = st+'</td>';
+    let el = document.getElementById('mon'+i);
+    el.innerHTML = '<td>'+ monDraw(i) +'</td>';
   }
   if (+year === thisDay.today.getFullYear()) thisDay.showToday();
+  markSpecialDates();
 }
 
 /**
- * Является ли дата памятной?
+ * Установка памятных дат
  */
-function isSpecialDate(month, day) {
-  // let yDate = dates.once[0].date;
+function markSpecialDates() {
   for (let dt of dates.once) {
-    let oDate = dt.date;
-    if (year == oDate.slice(0,4) && month == oDate.slice(5,7) && day == oDate.slice(8)) return dt.desc;
+    let oDate = new Date(dt.date);
+    if (+year === oDate.getFullYear()) {
+      insertDate(oDate, dt.desc, false);
+    }
   }
   for (let dt of dates.yearly) {
-    let oDate = dt.day;
-    if (month == oDate.slice(0,2) && day == oDate.slice(3) &&
-      (!dt.begin || dt.begin <= +year ) && (!dt.end || dt.end >= +year )) return dt.desc;
+    if (+year>=dt.begin && (!dt.end || +year<=dt.end)) {
+      insertDate(new Date(year+"-"+dt.day), dt.desc, true);
+    }
   }
-  return false;
+  function insertDate(date, text, holiday) {
+    const month = date.getMonth() + 1,
+        day = date.getDate(),
+        mt = document.getElementById("mon" + month).children[0]; // таблица текущего месяца
+    let row = date.getDay();
+    if (row === 0) row = 7;
+    row--;
+    let cell = mt.rows[row].cells[Math.floor((day + 5 - row) / 7)];
+    cell.setAttribute("data-tooltip", text);
+    cell.onmouseover = specDateOver;
+    cell.onmouseout = specDateOut;
+    cell.classList.add('spec-date');
+    if (holiday) cell.classList.add('holiday');
+  }
 }
 
 /**
@@ -230,13 +244,10 @@ function monDraw(mnum) {
     smon += '<tr>';
     for (let j = 0; j < cols; j++) {
       let curDay = 7 * j + i + 2 - day; // текущий день месяца
-      let cls = '', tip = isSpecialDate(mnum, curDay);
+      let cls = '';
       smon += '<td';
-      if (i > 4 && +year > 1967 || i > 5 && +year > 1917 || tip) cls = 'holiday';
-      if (tip) cls += ' spec-date';
+      if (i > 4 && +year > 1967 || i > 5 && +year > 1917) cls = 'holiday';
       if (cls.length > 0) smon += ` class="${cls}"`;
-      if (tip && tip.length > 0) {smon += ` data-tooltip="${tip}"`;
-      smon += ` onmouseover="specDateOver(event);" onmouseout="specDateOut(event)"`;}
       smon += '>';
       if (curDay < 1 || curDay > lday) smon += ' ';
       else smon += curDay;
