@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="Author" content="Trifonov D.A."> 
 <meta name="Date" content="2022-06-25">
-<meta name="Version" content="1.9">
+<meta name="Version" content="1.10">
 <meta name="Description" content="Eternal calendar">
 <title>Календарь</title>
 <script src="ncld.js"></script>
@@ -18,8 +18,8 @@
 year = iniScript();
 </script>
 <img src="img/right.png" onClick="scrollYear(1)" alt=">">
-год <span title="Обновить календарь">
-    <img src="img/relo25.png" id="updCal" onclick="chgCld()" alt="Обновить календарь">
+год <span>
+    <img src="img/relo25.png" id="updCal" onclick="refreshButton.press()" alt="Обновить календарь">
 </span>
 </h2>
 <script>

@@ -51,15 +51,20 @@ const thisDay = {
   }
 }
 
-window.onload = function (){
-  thisDay.showToday();
-}
-
+const refreshButton = {
+  button: null,
+  tipText: "Обновить календарь",
 // реакция на нажатие кнопки "обновить календарь"
-function chgCld() {
-  document.getElementById("updCal").style.visibility = "hidden"; // прячем кнопку
-  year = getYear();
-  updateCalendar();
+  press: function () {
+    this.button.style.visibility = "hidden"; // прячем кнопку
+    this.button.parentNode.title = ""; // прячем подсказку
+    year = getYear();
+    updateCalendar();
+  },
+  show: function () {
+    this.button.style.visibility = "visible"; // показать кнопку обновления
+    this.button.parentNode.title = this.tipText; // прячем подсказку
+  }
 }
 
 function chgeCursor(arg) {
@@ -70,6 +75,11 @@ function chgeCursor(arg) {
   }
 }
 
+window.onload = function (){
+  refreshButton.button = document.getElementById("updCal");
+  thisDay.showToday();
+}
+
 // Изменение года на один
 function scrollYear(diff) {
   let yr = +getYear() + diff;
@@ -78,7 +88,7 @@ function scrollYear(diff) {
   for (let i=0; i<4; i++) {
     document.getElementById("ydig"+i).src = 'img/'+yr[i]+'.jpg'; // рисуем новую цифру
   }
-  document.getElementById("updCal").style.visibility = "visible"; // показать кнопку обновления
+  refreshButton.show(); // показать кнопку обновления
   show_old_year();
 }
 
@@ -106,7 +116,7 @@ function chgeYear(arg) {
   }
   ist += nnum+".jpg";
   arg.src = ist;
-  document.getElementById("updCal").style.visibility = "visible"; // показать кнопку обновления
+  refreshButton.show(); // показать кнопку обновления
   show_old_year();
 }
 
