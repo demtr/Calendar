@@ -3,8 +3,7 @@ const months=['Январь','Февраль','Март','Апрель','Май'
     'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 const week=['Пн','Вт','Ср','Чт','Пт','Сб','Вс']
 let year; // текущий год календаря, отображаемый в таблице ("старый" год)
-let day; // день недели первого дня месяца 1..7
-let lday; // последний день месяца
+let thisYear = true;
 let tooltipElem;
 const dates = {yearly:[{day:"01-01",desc:"Новый год",begin:1700},
                        {day:"02-23",desc:"День Советской армии",begin:1922},
@@ -60,10 +59,15 @@ const refreshButton = {
     this.button.parentNode.title = ""; // прячем подсказку
     year = getYear();
     updateCalendar();
+    thisYear = true;
   },
   show: function () {
     this.button.style.visibility = "visible"; // показать кнопку обновления
-    this.button.parentNode.title = this.tipText; // прячем подсказку
+    this.button.parentNode.title = this.tipText; // показать подсказку
+  },
+  hide: function () {
+    this.button.style.visibility = "hidden"; // показать кнопку обновления
+    this.button.parentNode.title = ""; // прячем подсказку
   }
 }
 
@@ -89,15 +93,13 @@ function scrollYear(diff) {
   for (let i=0; i<4; i++) {
     document.getElementById("ydig"+i).src = 'img/'+yr[i]+'.jpg'; // рисуем новую цифру
   }
-  refreshButton.show(); // показать кнопку обновления
-  show_old_year();
+  toggleStencil(yr);
 }
 
 // Изменение одиночной цифры года при нажатии на ней кнопки мыши
 function chgeYear(arg) {
-  let st, ist, nnum;
+  let st, nnum;
   st = arg.src.substr(-5);
-  ist="img/";
 
   nnum = +st[0];
   if (event.clientY > 60) { // увеличиваем число на один
@@ -115,14 +117,27 @@ function chgeYear(arg) {
        else nnum = 9;
     } 
   }
-  ist += nnum+".jpg";
-  arg.src = ist;
-  refreshButton.show(); // показать кнопку обновления
-  show_old_year();
+  arg.src = "img/" + nnum + ".jpg";
+  toggleStencil(getYear());
+}
+
+// Переключение подсвечиваемого года в зависимости от "года прокрутки" (вверху)
+function toggleStencil(yr) {
+  if (yr===year) {
+    thisYear = true;
+    refreshButton.hide(); // спрятать кнопку обновления
+    toggleOldYearBacklight(2);
+  } else {
+    if (thisYear) { // подсветку и кнопку обновления включаем только один раз
+      refreshButton.show(); // показать кнопку обновления
+      toggleOldYearBacklight(1);
+    }
+    thisYear = false;
+  }
 }
 
 // Выкладываем цифры календаря на текущий год
-function iniScript(){
+function showYearDigits(){
     let yr= new Date(), st;
     yr = yr.getFullYear()+"";
     for (let i=0; i<4; i++)
@@ -134,19 +149,9 @@ function iniScript(){
     return yr;
 }
 
-// Получение первого и последнего дня месяца
-function getFirstAndLastDaysOfTheMonth(month) {
-  const yrs = new Date(year,month-1,1); // месяц: 0-11
-  day = yrs.getDay();
-  if ( day === 0 ) day = 7;
-  lday = new Date(year, month,0); // последний день месяца (дата - вычитаем один день из первого дня следующего месяца)
-  lday = lday.getDate(); // последний день месяца (число: 28-31)
-}
-
 // Создание календаря (первоначально - при запуске)
 function makeCalendar() {
   document.write('<link rel="stylesheet" href="ncld.css">');
-  if (day === 0) day = 7;
   document.write('<table border="0" cellspacing="0">');
   for (let i = 0; i < 3; i++) // по строкам
   {
@@ -232,18 +237,20 @@ function markSpecialDates() {
  */
 function monDraw(mnum) {
   let cols, smon = `<table class="${season(mnum)} month">`;
+  let fday; // день недели первого дня месяца 1..7
+  let lday; // последний день месяца
   getFirstAndLastDaysOfTheMonth(mnum);
   if (mnum === 2) {
-     cols = (day===1 && lday === 28) ? 4 : 5;
+     cols = (fday===1 && lday === 28) ? 4 : 5;
   }  else  {
-     if (day===6 && lday===31 || day===7) cols=6;
+     if (fday===6 && lday===31 || fday===7) cols=6;
      else cols=5;
   }
 
   for (let i = 0; i < 7; i++) {
     smon += '<tr>';
     for (let j = 0; j < cols; j++) {
-      let curDay = 7 * j + i + 2 - day; // текущий день месяца
+      let curDay = 7 * j + i + 2 - fday; // текущий день месяца
       let cls = '';
       smon += '<td';
       if (i > 4 && +year > 1967 || i > 5 && +year > 1917) cls = 'holiday';
@@ -257,6 +264,15 @@ function monDraw(mnum) {
   }
   smon += '</table>';
   return smon;
+
+// Получение первого и последнего дня месяца
+  function getFirstAndLastDaysOfTheMonth(month) {
+    const yrs = new Date(year,month-1,1); // месяц: 0-11
+    fday = yrs.getDay();
+    if ( fday === 0 ) fday = 7;
+    lday = new Date(year, month,0); // последний день месяца (дата - вычитаем один день из первого дня следующего месяца)
+    lday = lday.getDate(); // последний день месяца (число: 28-31)
+  }
 }
 
 ///////////////////////////////////////
@@ -290,20 +306,7 @@ function season(mnum) {
 }
 
 // Показать текущий год календаря подсветкой
-function show_old_year() {
-  for (let i=5; i<9; i++) // по месяцам
-  {
-    let el = document.getElementById('mon'+i);
-    show_bg_digit(el, year[i-5]);
-  }
-
-}
-
-// Формирование цифры года цветом фона
-function show_bg_digit(el, digit) {
-  const color = 'magenta';
-  const tbl = el.querySelector('table');
-  digit = +digit;
+function toggleOldYearBacklight(onOff) {
   // определяем координаты цифр в месячной сетке
   const digMap=[[[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,1],[3,4],[4,1],[4,4],[5,1],[5,4],[6,2],[6,3]], // цифра 0
     [[0,3],[1,2],[1,3],[2,1],[2,3],[3,3],[4,3],[5,3],[6,3]], // цифра 1
@@ -316,11 +319,34 @@ function show_bg_digit(el, digit) {
     [[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,2],[3,3],[4,1],[4,4],[5,1],[5,4],[6,2],[6,3]],
     [[0,2],[0,3],[1,1],[1,4],[2,1],[2,4],[3,2],[3,3],[3,4],[4,4],[5,1],[5,4],[6,2],[6,3]]]; // 9
 
-  for(let k=0; k<digMap[digit].length; k++) {
-    let s = tbl.rows[digMap[digit][k][0]].cells[digMap[digit][k][1]];
-    if (~s.className.indexOf('spec-date')) s.style.background = "lightcoral";
-    else s.style.background = color;
-    s.style.borderRadius = '5px';
+  for (let i=5; i<9; i++) // по месяцам
+  {
+    let el = document.getElementById('mon'+i);
+    if (onOff === 1) showBgDigit(el, year[i-5]);
+    else hideBgDigit(el, year[i-5]);
+  }
+
+// Формирование цифры года цветом фона
+  function showBgDigit(el, digit) {
+    const color = 'magenta';
+    const tbl = el.querySelector('table');
+    digit = +digit;
+    for(let k=0; k<digMap[digit].length; k++) {
+      let s = tbl.rows[digMap[digit][k][0]].cells[digMap[digit][k][1]];
+      if (~s.className.indexOf('spec-date')) s.style.background = "lightcoral";
+      else s.style.background = color;
+      s.style.borderRadius = '5px';
+    }
+  }
+
+// Очистка цифры года в фоне
+  function hideBgDigit(el, digit) {
+    const tbl = el.querySelector('table');
+    digit = +digit;
+    for(let k=0; k<digMap[digit].length; k++) {
+      let s = tbl.rows[digMap[digit][k][0]].cells[digMap[digit][k][1]];
+      s.style.background = null;
+    }
   }
 }
 
