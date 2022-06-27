@@ -55,8 +55,7 @@ const refreshButton = {
   tipText: "Обновить календарь",
 // реакция на нажатие кнопки "обновить календарь"
   press: function () {
-    this.button.style.visibility = "hidden"; // прячем кнопку
-    this.button.parentNode.title = ""; // прячем подсказку
+    this.hide();
     year = getYear();
     updateCalendar();
     thisYear = true;
